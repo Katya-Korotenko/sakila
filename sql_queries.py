@@ -1,7 +1,7 @@
 # наброски запросов
 SEARCH_TITLE_QUERY = """
-                        select title, description, release_year
-                        from film
-                        where title like '%DEVIL%';
-                     """
-
+    SELECT title, description, release_year
+    FROM film
+    WHERE title LIKE %s
+    
+"""
