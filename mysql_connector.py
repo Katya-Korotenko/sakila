@@ -2,6 +2,8 @@ import os
 
 import pymysql
 from dotenv import load_dotenv
+from pymysql.cursors import DictCursor
+from contextlib import contextmanager
 
 load_dotenv('.env')
 
@@ -12,6 +14,8 @@ config = {'host': os.getenv('DB_HOST'),
           'password': os.getenv('DB_PASSWORD'),
           'database': os.getenv('DB_NAME'),
           }
-
-def get_connection():
-    return pymysql.connect(**config)
+@contextmanager
+def get_cursor():
+    with pymysql.connect(**config) as connection:
+        with connection.cursor(DictCursor) as cursor:
+            yield cursor
