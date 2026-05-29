@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from pymysql.cursors import DictCursor
 from contextlib import contextmanager
 
+
 load_dotenv('.env')
 
 
@@ -19,3 +20,8 @@ def get_cursor():
     with pymysql.connect(**config) as connection:
         with connection.cursor(DictCursor) as cursor:
             yield cursor
+
+def execute_query(query, parameter = None):
+    with get_cursor() as cursor:
+        cursor.execute(query, parameter)
+        return cursor.fetchall()
