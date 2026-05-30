@@ -2,11 +2,13 @@ import sys
 import re
 
 from movie_searcher import MovieSearcher
+from history_search import *
 
 
 class Menu(MovieSearcher):
 
     def __init__(self):
+        self.logger = SearchLogger()
         self.main_options = {
             "1": ("Search movies.", self.show_submenu_for_movies),
             "2": ("Top searches movies.", self.top_searches),
@@ -21,29 +23,57 @@ class Menu(MovieSearcher):
         self.show_menu(sub_options)
     # основной поиск по году
     def handle_year_search(self):
-        pattern = r'^(\d{4})(?:-(\d{4}))?$'
+        pattern = r'^(\d{4})(?:(?:\s*-\s*|\s+)(\d{4}))?$'
         years = self.get_year_range()
-        for year in years:
-            print(f"Choose a year range between {year['min']} and {year['max']}")
+        min_year = years[0]['min']
+        max_year = years[0]['max']
+        print(f"Choose a year range between {min_year} and {max_year}")
         input_year = input("Enter year: ")
         match = re.match(pattern, input_year)
         if match:
             year_from = int(match.group(1))
             year_to = int(match.group(2)) if match.group(2) else year_from
+            if not (min_year <= year_from <= max_year and min_year <= year_to <= max_year):
+                print(f"Years must be between {min_year} and {max_year}")
+                self.handle_year_search()
+                return
             movies = self.search_by_year(year_from, year_to, offset=0)
+            self.logger.log_search(
+                search_type="year",
+                params={"year_from": year_from, "year_to": year_to},
+                results_count=len(movies))
             self.print_films(movies, lambda offset: self.search_by_year(year_from, year_to, offset))
 
-    #  поиск по жанру
+        else:
+            print("Invalid format.")
+            self.handle_year_search()
+
+            #  поиск по жанру
     def handle_genre_search(self):
         genres = self.get_genres()
-        selected = self.print_genres(genres)
-        movies = self.search_by_genre(selected, offset=0)
-        self.print_films(movies, lambda offset: self.search_by_genre(selected, offset))
+        genre = self.print_genres(genres)
+        movies = self.search_by_genre(genre, offset=0)
+        self.logger.log_search(
+            search_type="genre",
+            params={"genre": genre},
+            results_count=len(movies)
+        )
+        self.print_films(movies, lambda offset: self.search_by_genre(genre, offset))
     #поиск по ключевому слову
     def handle_keyword_search(self):
-        choice = input("What movie do you want to search?: ")
-        movies = self.search_by_keyword(choice, offset=0)
-        self.print_films(movies, lambda offset: self.search_by_keyword(choice, offset))
+        keyword = input("What movie do you want to search?: ")
+        movies = self.search_by_keyword(keyword, offset=0)
+        self.logger.log_search(
+            search_type="keyword",
+            params={"keyword": keyword},
+            results_count=len(movies)
+        )
+        self.print_films(movies, lambda offset: self.search_by_keyword(keyword, offset))
+
+    # в процессе реализации
+    def top_searches(self):
+        print("Top searches")
+
 
     # вывод всех жанров
     def print_genres(self, genres):
