@@ -12,8 +12,8 @@ class MovieSearcher:
     def get_year_range(self):
         return execute_query(MIN_MAX_YEAR_QUERY)
 
-    def search_by_year(self, year, offset = 10):
-        return execute_query(YEAR_RANGE_QUERY,(year, offset))
+    def search_by_year(self, year_from, year_to, offset = 10):
+        return execute_query(YEAR_RANGE_QUERY,(year_from, year_to, offset))
 
     def search_by_genre(self, genre,  offset=0):
         return execute_query(CHOICE_GENRE_QUERY, (genre, offset,))
