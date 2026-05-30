@@ -1,6 +1,5 @@
 import sys
-
-from dns.entropy import between
+import re
 
 from movie_searcher import MovieSearcher
 
@@ -17,19 +16,23 @@ class Menu(MovieSearcher):
         sub_options = {
             "1": ("Search movies by keyword.",self.handle_keyword_search),
             "2": ("Search movies by genre.", self.handle_genre_search),
-            "3": ("Search movies by year ",self.year_range),
+            "3": ("Search movies by year ",self.handle_year_search),
             "0": ("Back", lambda: self.show_menu(self.main_options)),}
         self.show_menu(sub_options)
-
-    # поиск по выбраному году (пока наработка)
-    def year_range(self):
+    # основной поиск по году
+    def handle_year_search(self):
+        pattern = r'^(\d{4})(?:-(\d{4}))?$'
         years = self.get_year_range()
         for year in years:
             print(f"Choose a year range between {year['min']} and {year['max']}")
         input_year = input("Enter year: ")
-        movies = self.search_by_year(input_year, offset=0)
-        if input_year.isdigit():
-            self.print_films(movies, lambda offset: self.search_by_year(input_year, offset))
+        match = re.match(pattern, input_year)
+        if match:
+            year_from = int(match.group(1))
+            year_to = int(match.group(2)) if match.group(2) else year_from
+            movies = self.search_by_year(year_from, year_to, offset=0)
+            self.print_films(movies, lambda offset: self.search_by_year(year_from, year_to, offset))
+
     #  поиск по жанру
     def handle_genre_search(self):
         genres = self.get_genres()
