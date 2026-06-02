@@ -4,13 +4,12 @@ from pymongo import MongoClient
 
 load_dotenv('.env')
 
-
+_client = MongoClient(os.getenv("MONGO_URI"))
 
 def get_mongo_collection():
-    client = MongoClient(os.getenv('MONGO_URI'))
-    db = client["ich_edit"]
-    return db["final_project_121225ptm_Kateryna"]
+    return _client["ich_edit"]["DB_COLLECTION"]
 
 
-
+def close_connection():
+    _client.close()
 
