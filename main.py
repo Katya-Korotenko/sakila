@@ -1,6 +1,6 @@
 import ui
 
-from mongo_connector import *
+from mongo_connector import close_connection
 
 
 def main():
