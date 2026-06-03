@@ -37,13 +37,10 @@ class Menu:
                 print(f"{key}. {label}")
 
             choice = input("Select a menu option: ").strip()
-            if choice not in options:
-                print("Invalid choice, try again")
-                continue
-
-            result = options[choice][1]()
-            if result == "exit":
+            if choice in options:
+                options[choice][1]()
                 return
+            print("Invalid choice, try again")
 
     # ---------------- SEARCH WRAPPER ----------------
 
@@ -132,6 +129,9 @@ class Menu:
             if not (min_year <= year_from <= max_year and min_year <= year_to <= max_year):
                 print(f"Years must be between {min_year} and {max_year}")
                 continue
+            if year_from > year_to:
+                print("Start year cannot be greater than end year.")
+                continue
 
             break
 
@@ -190,19 +190,14 @@ class Menu:
             print("===Result===")
             for movie in movies:
                 self.show_movie(movie)
-
         if not movies:
             print("Movies not found.")
             self.post_action_menu()
             return
-
         show_page(movies)
-
         while True:
             if len(movies) < 10:
-                self.post_action_menu()
-                return
-
+                break
             try:
                 choice = input("Next [n] | Back [0]: ").strip().lower()
             except EOFError:
@@ -212,7 +207,6 @@ class Menu:
             except KeyboardInterrupt:
                 print("\nInterrupted. Exiting.")
                 sys.exit(0)
-
             if choice == "n":
                 offset += 10
                 try:
@@ -221,19 +215,15 @@ class Menu:
                     print(f"Error loading next page: {e}")
                     self.post_action_menu()
                     return
-
                 if not movies:
                     print("No more movies.")
                     self.post_action_menu()
                     return
-
                 show_page(movies)
                 continue
-
             elif choice == "0":
                 self.post_action_menu()
                 return
-
             else:
                 print("Invalid choice. Please enter 'n' or '0'.")
                 continue
@@ -244,18 +234,14 @@ class Menu:
     def post_action_menu():
         while True:
             try:
-                choice = input("\n[m] Menu | [e] Exit: ").strip().lower()
+                choice = input("\n[b] Back | [e] Exit: ").strip().lower()
             except EOFError:
                 print("\nInput error. Returning to menu.")
                 return
             except KeyboardInterrupt:
                 print("\nInterrupted. Exiting.")
                 sys.exit(0)
-            if choice == "m":
+            if choice == "b":
                 return
             if choice == "e":
-                try:
-                    sys.exit(0)
-                except SystemExit:
-                    raise
-            print("Invalid choice.")
+                sys.exit(0)
