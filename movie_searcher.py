@@ -1,5 +1,5 @@
 from mysql_connector import execute_query
-from sql_queries import *
+from sql_queries import SEARCH_TITLE_QUERY, ALL_GENERS_QUERY, MIN_MAX_YEAR_QUERY, YEAR_RANGE_QUERY, CHOICE_GENRE_QUERY
 
 class MovieSearcher:
 
