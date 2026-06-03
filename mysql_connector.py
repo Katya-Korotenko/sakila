@@ -17,9 +17,13 @@ config = {'host': os.getenv('DB_HOST'),
           }
 @contextmanager
 def get_cursor():
-    with pymysql.connect(**config) as connection:
-        with connection.cursor(DictCursor) as cursor:
-            yield cursor
+    try:
+        with pymysql.connect(**config) as connection:
+            with connection.cursor(DictCursor) as cursor:
+                yield cursor
+    except pymysql.Error as e:
+        print(f"Database error: {e}")
+        raise
 
 def execute_query(query, parameter = None):
     with get_cursor() as cursor:
