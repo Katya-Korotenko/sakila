@@ -1,5 +1,5 @@
 from datetime import datetime
-from mongo_connector import *
+from mongo_connector import get_mongo_collection
 
 
 class SearchLogger:
