@@ -7,7 +7,7 @@ load_dotenv('.env')
 _client = MongoClient(os.getenv("MONGO_URI"))
 
 def get_mongo_collection():
-    return _client["MONGO_DB"]["MONGO_COLLECTION"]
+    return _client[os.getenv("MONGO_DB")][os.getenv("MONGO_COLLECTION")]
 
 
 def close_connection():
