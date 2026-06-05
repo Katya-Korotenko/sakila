@@ -1,6 +1,6 @@
 import sys
 import re
-from typing import Any, Callable, Optional, NoReturn
+from typing import Any, Callable, Optional
 
 from movie_searcher import MovieSearcher
 from history_search import SearchLogger
@@ -47,8 +47,8 @@ class Menu:
             choice: str = input("Select a menu option: ").strip()
             if choice in options:
                 options[choice][1]()
-                return
-            print("Invalid choice, try again")
+            else:
+                print("Invalid choice, try again")
 
     def run_search(self, search_type: str, params: dict[str, Any],
                    search_func: Callable[[int], list[dict[str, Any]]]) -> None:
@@ -260,7 +260,7 @@ class Menu:
         self.post_action_menu()
 
     @staticmethod
-    def post_action_menu() -> Optional[NoReturn]:
+    def post_action_menu() -> None:
         """Prompts user to go back or exit the program."""
         while True:
             try:
